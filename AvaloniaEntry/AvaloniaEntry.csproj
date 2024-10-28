@@ -13,4 +13,9 @@
   <ItemGroup>
 	  <PackageReference Include="PublishAotCross" Version="1.0.0" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\OpenHarmony.Net\OpenHarmony.Sdk\OpenHarmony.Sdk.csproj" />
+  </ItemGroup>
+
 </Project>

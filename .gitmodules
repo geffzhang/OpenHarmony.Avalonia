@@ -1,0 +1,3 @@
+[submodule "OpenHarmony.Net"]
+	path = OpenHarmony.Net
+	url = https://github.com/CeSun/OpenHarmony.Net.git

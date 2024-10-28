@@ -5,6 +5,8 @@ VisualStudioVersion = 17.12.35410.144
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AvaloniaEntry", "AvaloniaEntry\AvaloniaEntry.csproj", "{956C344F-D951-4676-A07E-10A75ACDB433}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenHarmony.Sdk", "OpenHarmony.Net\OpenHarmony.Sdk\OpenHarmony.Sdk.csproj", "{F3F81658-A7D7-47B5-9D02-8200193FE40E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{956C344F-D951-4676-A07E-10A75ACDB433}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{956C344F-D951-4676-A07E-10A75ACDB433}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{956C344F-D951-4676-A07E-10A75ACDB433}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F3F81658-A7D7-47B5-9D02-8200193FE40E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F3F81658-A7D7-47B5-9D02-8200193FE40E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F3F81658-A7D7-47B5-9D02-8200193FE40E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F3F81658-A7D7-47B5-9D02-8200193FE40E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
