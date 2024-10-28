@@ -1,0 +1,51 @@
+{
+  "module": {
+    "name": "AvaloniaNative",
+    "type": "entry",
+    "description": "$string:module_desc",
+    "mainElement": "AvaloniaNativeAbility",
+    "deviceTypes": [
+      "default",
+      "tablet"
+    ],
+    "deliveryWithInstall": true,
+    "installationFree": false,
+    "pages": "$profile:main_pages",
+    "abilities": [
+      {
+        "name": "AvaloniaNativeAbility",
+        "srcEntry": "./ets/avalonianativeability/AvaloniaNativeAbility.ets",
+        "description": "$string:AvaloniaNativeAbility_desc",
+        "icon": "$media:layered_image",
+        "label": "$string:AvaloniaNativeAbility_label",
+        "startWindowIcon": "$media:startIcon",
+        "startWindowBackground": "$color:start_window_background",
+        "exported": true,
+        "skills": [
+          {
+            "entities": [
+              "entity.system.home"
+            ],
+            "actions": [
+              "action.system.home"
+            ]
+          }
+        ]
+      }
+    ],
+    "extensionAbilities": [
+      {
+        "name": "AvaloniaNativeBackupAbility",
+        "srcEntry": "./ets/avalonianativebackupability/AvaloniaNativeBackupAbility.ets",
+        "type": "backup",
+        "exported": false,
+        "metadata": [
+          {
+            "name": "ohos.extension.backup",
+            "resource": "$profile:backup_config"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,10 @@
+/.vs
+/OHOS_Project/oh_modules
+/OHOS_Project/.hvigor
+/OHOS_Project/.idea
+/OHOS_Project/AvaloniaNative/libs/arm64-v8a/OpenHarmony.Sdk.pdb
+/OHOS_Project/AvaloniaNative/libs/arm64-v8a/libavalonia.so
+/AvaloniaEntry/obj
+/AvaloniaEntry/bin
+/AvaloniaEntry/AvaloniaEntry.csproj.user
+/AvaloniaEntry/Properties/PublishProfiles/FolderProfile.pubxml.user
