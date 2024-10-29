@@ -15,7 +15,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\OpenHarmony.Net\OpenHarmony.Sdk\OpenHarmony.Sdk.csproj" />
+    <ProjectReference Include="..\..\OpenHarmony.Net\OpenHarmony.Sdk\OpenHarmony.Sdk.csproj" />
+    <ProjectReference Include="..\Avalonia.OpenHarmony\Avalonia.OpenHarmony.csproj" />
+    <ProjectReference Include="..\Example\AvaloniaExample\AvaloniaExample\AvaloniaExample.csproj" />
   </ItemGroup>
 
 </Project>

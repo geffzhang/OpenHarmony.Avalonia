@@ -2,7 +2,7 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-namespace AvaloniaEntry;
+namespace Entry;
 
 public class napi_init
 {
@@ -43,10 +43,10 @@ public class napi_init
             {
                 var p = Marshal.AllocHGlobal(sizeof(OH_NativeXComponent_Callback));
                 ref var g_ComponentCallback = ref Unsafe.AsRef<OH_NativeXComponent_Callback>((void*)p);
-                g_ComponentCallback.OnSurfaceCreated = &XComponent.OnSurfaceCreated;
-                g_ComponentCallback.OnSurfaceChanged = &XComponent.OnSurfaceChanged;
-                g_ComponentCallback.OnSurfaceDestroyed = &XComponent.OnSurfaceDestroyed;
-                g_ComponentCallback.DispatchTouchEvent = &XComponent.DispatchTouchEvent;
+                g_ComponentCallback.OnSurfaceCreated = &XComponentEntry.OnSurfaceCreated;
+                g_ComponentCallback.OnSurfaceChanged = &XComponentEntry.OnSurfaceChanged;
+                g_ComponentCallback.OnSurfaceDestroyed = &XComponentEntry.OnSurfaceDestroyed;
+                g_ComponentCallback.DispatchTouchEvent = &XComponentEntry.DispatchTouchEvent;
                 ace_ndk.OH_NativeXComponent_RegisterCallback(nativeXComponent, (OH_NativeXComponent_Callback*)p);
             }
         }
