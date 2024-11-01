@@ -6,15 +6,10 @@
     <Nullable>enable</Nullable>
 	<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	<PublishAot>true</PublishAot>
-	<InvariantGlobalization>true</InvariantGlobalization>
 	<AssemblyName>libavalonia</AssemblyName>
   </PropertyGroup>
-
-  <ItemGroup>
-	  <PackageReference Include="PublishAotCross" Version="1.0.0" />
-  </ItemGroup>
-
-  <ItemGroup>
+	<Import Project="../../PublishAotCross/src/PublishAotCross.targets" />
+	<ItemGroup>
     <ProjectReference Include="..\..\OpenHarmony.Net\OpenHarmony.Sdk\OpenHarmony.Sdk.csproj" />
     <ProjectReference Include="..\Avalonia.OpenHarmony\Avalonia.OpenHarmony.csproj" />
     <ProjectReference Include="..\Example\AvaloniaExample\AvaloniaExample\AvaloniaExample.csproj" />

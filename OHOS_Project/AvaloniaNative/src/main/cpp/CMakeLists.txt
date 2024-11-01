@@ -13,3 +13,4 @@ include_directories(${NATIVERENDER_ROOT_PATH}
 
 add_library(avalonianative SHARED napi_init.cpp)
 target_link_libraries(avalonianative PUBLIC libace_napi.z.so)
+target_link_libraries(avalonianative PUBLIC libicu.so)

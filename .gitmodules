@@ -1,3 +1,6 @@
 [submodule "OpenHarmony.Net"]
 	path = OpenHarmony.Net
 	url = https://github.com/CeSun/OpenHarmony.Net.git
+[submodule "PublishAotCross"]
+	path = PublishAotCross
+	url = https://github.com/CeSun/PublishAotCross.git
