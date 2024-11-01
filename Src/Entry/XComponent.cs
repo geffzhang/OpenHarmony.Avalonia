@@ -15,9 +15,6 @@ public class XComponent
 
     public XComponent(IntPtr XComponentHandle, IntPtr WindowHandle)
     {
-        var rsa = System.Security.Cryptography.RSA.Create();
-
-
         this.XComponentHandle = XComponentHandle;
         this.WindowHandle = WindowHandle;
     }
