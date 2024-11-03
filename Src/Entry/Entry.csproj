@@ -7,7 +7,6 @@
 	<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	<PublishAot>true</PublishAot>
 	<AssemblyName>libavalonia</AssemblyName>
-	<InvariantGlobalization>true</InvariantGlobalization>
   </PropertyGroup>
 	<Import Project="../../PublishAotCross/src/PublishAotCross.targets" />
 	<ItemGroup>
