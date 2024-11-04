@@ -1,5 +1,4 @@
-﻿using Avalonia;
-using Avalonia.OpenHarmony;
+﻿using Avalonia.OpenHarmony;
 using AvaloniaExample;
 using OpenHarmony.Sdk.Native;
 using System.Runtime.CompilerServices;
@@ -13,13 +12,10 @@ public unsafe static class XComponentEntry
     [UnmanagedCallersOnly(CallConvs = [typeof(CallConvCdecl)])]
     public static void OnSurfaceCreated(OH_NativeXComponent* component, void* window)
     {
-        Hilog.OH_LOG_DEBUG(LogType.LOG_APP, "CSharp", "OnSurfaceCreated111");
         ace_ndk.OH_NativeXComponent_RegisterOnFrameCallback(component, &OnSurfaceRendered);
-
         if (XComponents.TryGetValue((nint)component, out XComponent? xComponent) == true)
             return;
-        Hilog.OH_LOG_DEBUG(LogType.LOG_APP, "CSharp", "OnSurfaceCreated222");
-        xComponent = new XComponent((nint)component, (nint)window);
+        xComponent = new AvaloniaXComponent<App>((nint)component, (nint)window);
         XComponents.Add((nint)component, xComponent);
         xComponent.OnSurfaceCreated();
     }

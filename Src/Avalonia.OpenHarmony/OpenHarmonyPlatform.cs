@@ -1,7 +1,10 @@
 ﻿using Avalonia.Input.Platform;
+using Avalonia.Media;
 using Avalonia.OpenGL.Egl;
 using Avalonia.Platform;
+using Avalonia.Rendering;
 using Avalonia.Rendering.Composition;
+using Avalonia.Skia;
 
 namespace Avalonia.OpenHarmony;
 
@@ -11,7 +14,10 @@ public class OpenHarmonyPlatform
 
     public static void Initialize()
     {
-        AvaloniaLocator.CurrentMutable.Bind<PlatformHotkeyConfiguration>().ToSingleton<PlatformHotkeyConfiguration>();
+        AvaloniaLocator.CurrentMutable
+            .Bind<PlatformHotkeyConfiguration>().ToSingleton<PlatformHotkeyConfiguration>()
+            .Bind<IRenderTimer>().ToConstant(OpenHarmonyRenderTimer.Instance)
+            .Bind<IFontManagerImpl>().ToConstant(new CustomFontManagerImpl());
         var platformGraphics = InitializeGraphics();
         if (platformGraphics is not null)
         {

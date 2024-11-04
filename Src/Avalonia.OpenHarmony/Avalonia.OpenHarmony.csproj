@@ -9,6 +9,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+	<EmbeddedResource Include="Assets\Inter-Regular.ttf" />
+    <EmbeddedResource Include="Assets\NotoMono-Regular.ttf" />
+	<EmbeddedResource Include="Assets\NotoSans-Italic.ttf" />
+	<EmbeddedResource Include="Assets\NotoSansArabic-Regular.ttf" />
+	<EmbeddedResource Include="Assets\NotoSansHebrew-Regular.ttf" />
+    <EmbeddedResource Include="Assets\TwitterColorEmoji-SVGinOT.ttf" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Avalonia.Skia" Version="11.1.4" />
 	<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="all" />
   </ItemGroup>
