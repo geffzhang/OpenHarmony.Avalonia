@@ -4,6 +4,10 @@ using Avalonia.Platform;
 using SkiaSharp;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using OpenHarmony.Sdk.Native;
+using System.Runtime.Loader;
+using System.Reflection;
+using System.Runtime.Serialization;
 
 namespace Avalonia.OpenHarmony;
 
@@ -70,15 +74,20 @@ public class CustomFontManagerImpl : IFontManagerImpl
             _customFonts.Initialize(this);
         }
 
+        if (familyName == "$Default")
+            familyName = _defaultFamilyName;
         if (_customFonts.TryGetGlyphTypeface(familyName, style, weight, stretch, out glyphTypeface))
         {
             return true;
         }
 
+
+        var assetLoader = AvaloniaLocator.Current.GetRequiredService<IAssetLoader>();
         var skTypeface = SKTypeface.FromFamilyName(familyName,
                     (SKFontStyleWeight)weight, SKFontStyleWidth.Normal, (SKFontStyleSlant)style);
 
-        glyphTypeface = new GlyphTypefaceImpl(skTypeface, FontSimulations.None);
+
+        glyphTypeface =  GetGlyphTypeface(skTypeface, FontSimulations.None);
 
         return true;
     }
@@ -86,9 +95,44 @@ public class CustomFontManagerImpl : IFontManagerImpl
     public bool TryCreateGlyphTypeface(Stream stream, FontSimulations fontSimulations, [NotNullWhen(true)] out IGlyphTypeface glyphTypeface)
     {
         var skTypeface = SKTypeface.FromStream(stream);
-
-        glyphTypeface = new GlyphTypefaceImpl(skTypeface, fontSimulations);
-
+        glyphTypeface = GetGlyphTypeface(skTypeface, fontSimulations);
         return true;
     }
+
+    public IGlyphTypeface GetGlyphTypeface(SKTypeface skTypeface, FontSimulations fontSimulations)
+    {
+        Type? type = null;
+        Assembly? currentAssembly = null;
+        foreach (var alc in AssemblyLoadContext.All)
+        {
+            Hilog.OH_LOG_DEBUG(LogType.LOG_APP, "csharp", "AssemblyLoadContext");
+            foreach (var assembly in alc.Assemblies)
+            {
+                Hilog.OH_LOG_DEBUG(LogType.LOG_APP, "csharp", "Assemblies");
+                type = assembly.GetType("Avalonia.Skia.GlyphTypefaceImpl");
+                currentAssembly = assembly;
+                if (type != null)
+                    break;
+            }
+            if (type != null)
+                break;
+        }
+        try
+        {
+            var ctor = type.GetConstructor([typeof(SKTypeface), typeof(FontSimulations)]);
+            object obj = (object)FormatterServices.GetUninitializedObject(type);
+            ctor.Invoke(obj, [skTypeface, fontSimulations]);
+            return (IGlyphTypeface)obj;
+
+        }
+        catch (Exception ex)
+        {
+            Hilog.OH_LOG_ERROR(LogType.LOG_APP, "CSharp", ex.Message);
+            Hilog.OH_LOG_ERROR(LogType.LOG_APP, "CSharp", ex.StackTrace);
+            throw ex;
+        }
+        return null;
+    }
+
+   
 }

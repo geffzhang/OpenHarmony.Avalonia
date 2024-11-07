@@ -1,6 +1,7 @@
 ﻿using OpenHarmony.Sdk.Native;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Runtime.Loader;
 
 namespace Entry;
 

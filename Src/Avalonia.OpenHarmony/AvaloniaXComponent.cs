@@ -1,4 +1,5 @@
 ﻿using Avalonia.Controls.Embedding;
+using Avalonia.Threading;
 using OpenHarmony.Sdk.Native;
 using System;
 using System.Collections.Generic;
@@ -34,6 +35,7 @@ public class AvaloniaXComponent<TApp> : XComponent where TApp : Application, new
         base.OnSurfaceRendered(timestamp, targetTimestamp);
         OpenHarmonyRenderTimer.Instance.Render();
         TopLevelImpl.Paint.Invoke(new Rect(GetSize()));
+        OpenHarmonyPlatform.OpenHarmonyPlatformThreading.Tick();
     }
     private void CreateView(AppBuilder appBuilder)
     {

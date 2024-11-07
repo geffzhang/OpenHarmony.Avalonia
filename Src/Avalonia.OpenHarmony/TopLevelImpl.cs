@@ -33,7 +33,7 @@ public class TopLevelImpl : ITopLevelImpl, EglGlPlatformSurface.IEglWindowGlPlat
     }
 
 
-    public Size ClientSize => new Size(Size.Width, Size.Height);
+    public Size ClientSize => new Size(Size.Width, Size.Height) / Scaling;
 
     public Size? FrameSize => null;
 

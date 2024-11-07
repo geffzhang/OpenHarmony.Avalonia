@@ -14,5 +14,8 @@
     <ProjectReference Include="..\Avalonia.OpenHarmony\Avalonia.OpenHarmony.csproj" />
     <ProjectReference Include="..\Example\AvaloniaExample\AvaloniaExample\AvaloniaExample.csproj" />
   </ItemGroup>
+	<ItemGroup>
+		<RdXmlFile Include="rd.xml" />
+	</ItemGroup>
 
 </Project>
