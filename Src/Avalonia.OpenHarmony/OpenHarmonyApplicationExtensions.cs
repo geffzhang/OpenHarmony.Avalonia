@@ -15,4 +15,16 @@ public static class OpenHarmonyApplicationExtensions
             .UseWindowingSubsystem(OpenHarmonyPlatform.Initialize, "OpenHarmony")
             .UseSkia();
     }
+
+    public static AppBuilder UseSoftwareRenderer(this AppBuilder builder)
+    {
+        AvaloniaLocator.CurrentMutable.Bind<OpenHarmonyPlatformOptions>().ToConstant(new OpenHarmonyPlatformOptions { RenderingMode = [OpenHarmonyPlatformRenderingMode.Software] });
+        return builder; 
+    }
+
+    public static AppBuilder UseSoftWareRenderer(this AppBuilder builder)
+    {
+        return builder;
+    }
+
 }

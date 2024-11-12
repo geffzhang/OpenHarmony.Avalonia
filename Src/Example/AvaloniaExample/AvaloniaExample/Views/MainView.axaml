@@ -12,7 +12,28 @@
     <vm:MainViewModel />
   </Design.DataContext>
 	<StackPanel>
+		<Image Source="avares://AvaloniaExample/Assets/test_image.png"/>
 		<TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-		<TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+		<TextBox Text="Hello OpenHarmony!"></TextBox>
+		<ProgressBar  Margin="0 10" Height="20"
+					  Minimum="0" Maximum="100" Value="92"
+					  Foreground="Red"
+					  ShowProgressText="True"/>
+		<Slider Value="35" x:Name="slider" />
+		<RadioButton GroupName="First Group"
+              Content="First Option"/>
+		<RadioButton GroupName="First Group"
+				  Content="Second Option"/>
+		<RadioButton IsEnabled="False"
+				  GroupName="First Group"
+				  Content="Third Option"/>
+		<CheckBox>Not checked by default</CheckBox>
+		<CheckBox IsChecked="True">Checked by default</CheckBox>
+		<Panel Height="300" Width="300">
+			<Rectangle Fill="Red" Height="100" VerticalAlignment="Top"/>
+			<Rectangle Fill="Blue" Opacity="0.5" Width="100" HorizontalAlignment="Right" />
+			<Rectangle Fill="Green" Opacity="0.5" Height="100" VerticalAlignment="Bottom"/>
+			<Rectangle Fill="Orange" Width="100" HorizontalAlignment="Left"/>
+		</Panel>
 	</StackPanel>
 </UserControl>

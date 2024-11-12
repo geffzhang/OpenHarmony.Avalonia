@@ -4,9 +4,19 @@ using Avalonia.Input.Raw;
 using Avalonia.OpenGL.Egl;
 using Avalonia.OpenGL.Surfaces;
 using Avalonia.Platform;
+using Avalonia.Rendering;
 using Avalonia.Rendering.Composition;
 using OpenHarmony.Sdk;
 using OpenHarmony.Sdk.Native;
+using Silk.NET.OpenGLES;
+using StbImageWriteSharp;
+using System.Drawing;
+using System.IO;
+using System.Net;
+using System.Numerics;
+using System.Runtime.InteropServices;
+using System.Xml.Linq;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Avalonia.OpenHarmony;
 
@@ -21,6 +31,47 @@ public class TopLevelImpl : ITopLevelImpl, EglGlPlatformSurface.IEglWindowGlPlat
     public double Scaling { get; private set; }
 
     public IGlPlatformSurface _gl;
+
+    public GL gl;
+
+    public List<OpenHarmonyFramebuffer> framebuffers = [];
+    public void AddFrameBuffer(OpenHarmonyFramebuffer framebuffer)
+    {
+        Hilog.OH_LOG_INFO(LogType.LOG_APP, "framebuffer", "AddFrameBuffer");
+        framebuffers.Add(framebuffer);
+    }
+
+    public void DelFrameBuffer(OpenHarmonyFramebuffer framebuffer)
+    {
+        framebuffers.Remove(framebuffer);
+        Hilog.OH_LOG_INFO(LogType.LOG_APP, "framebuffer", "DelFrameBuffer");
+    }
+
+    public unsafe void Render()
+    {
+        OpenHarmonyRenderTimer.Instance.Render();
+        Paint.Invoke(new Rect(0, 0, Size.Width, Size.Height));
+        OpenHarmonyPlatform.OpenHarmonyPlatformThreading.Tick();
+
+        if (gl != null)
+        {
+            InitOrUpdateTexture();
+
+            gl.ClearColor(Color.Red);
+            gl.Clear(ClearBufferMask.DepthBufferBit | ClearBufferMask.ColorBufferBit);
+
+            gl.UseProgram(programId);
+            var location = gl.GetUniformLocation(programId, "Texture_Buffer");
+            gl.Uniform1(location, 1);
+            gl.ActiveTexture(GLEnum.Texture1);
+            gl.BindTexture(GLEnum.Texture2D, textureId);
+            gl.BindVertexArray(vao);
+            gl.DrawElements(GLEnum.Triangles, 6, GLEnum.UnsignedInt, (void*)0);
+
+
+        }
+        
+    }
     public unsafe TopLevelImpl(IntPtr xcomponent, IntPtr window)
     {
         Window = window;
@@ -32,7 +83,153 @@ public class TopLevelImpl : ITopLevelImpl, EglGlPlatformSurface.IEglWindowGlPlat
         Size = new PixelSize((int)width, (int)height);
         Scaling = density;
         _gl = new EglGlPlatformSurface(this);
-        Surfaces = [_gl];
+        Surfaces = [_gl, new FramebufferManager(this)];
+        gl = AvaloniaLocator.Current.GetService<GL>();
+        if (gl != null)
+        {
+            Init();
+            InitShader();
+            InitOrUpdateTexture();
+        }
+    }
+
+    public uint textureId;
+
+    public nint Address;
+    public unsafe void InitOrUpdateTexture()
+    {
+        if (Address == 0)
+        {
+            Address = Marshal.AllocHGlobal(sizeof(byte) * 4 * Size.Width * Size.Height);
+            var span = new Span<byte>((void*)Address, 4 * Size.Width * Size.Height);
+            for (int i = 0; i < span.Length; i++)
+                span[i] = 255;
+        }
+        if (textureId != 0)
+        {
+            gl.DeleteTexture(textureId);
+        }
+
+        textureId = gl.GenTexture();
+        gl.BindTexture(GLEnum.Texture2D, textureId);
+        gl.TexImage2D(GLEnum.Texture2D, 0, (int)GLEnum.Rgba8, (uint)Size.Width, (uint)Size.Height, 0, GLEnum.Rgba, GLEnum.UnsignedByte, (void*)Address);
+        gl.TexParameter(GLEnum.Texture2D, GLEnum.TextureMinFilter, (int)GLEnum.Linear);
+        gl.TexParameter(GLEnum.Texture2D, GLEnum.TextureMagFilter, (int)GLEnum.Linear);
+        gl.TexParameter(GLEnum.Texture2D, GLEnum.TextureWrapS, (int)GLEnum.ClampToEdge);
+        gl.TexParameter(GLEnum.Texture2D, GLEnum.TextureWrapT, (int)GLEnum.ClampToEdge);
+    }
+
+    public unsafe void InitShader()
+    {
+        var VertShaderSource = @"
+#version 300 es
+precision highp float;
+
+layout (location = 0) in vec3 Position;
+layout (location = 1) in vec2 TexCoord;
+
+
+out vec2 texCoord;
+
+void main()
+{
+	texCoord = TexCoord;
+	gl_Position = vec4(Position, 1.0f);
+}
+";
+        var FragShaderSource = @"
+#version 300 es
+precision highp float;
+layout (location = 0) out vec4 Color;
+
+
+uniform sampler2D Texture_Buffer;
+in vec2 texCoord;
+void main()
+{
+ Color = texture(Texture_Buffer, texCoord);
+}
+";
+
+        var vert = gl.CreateShader(GLEnum.VertexShader);
+        gl.ShaderSource(vert, VertShaderSource);
+        gl.CompileShader(vert);
+        gl.GetShader(vert, GLEnum.CompileStatus, out int code);
+        if (code == 0)
+        {
+            var info = gl.GetShaderInfoLog(vert);
+            Console.WriteLine(VertShaderSource);
+            Hilog.OH_LOG_ERROR(LogType.LOG_APP, "vs shader", info);
+            throw new Exception(info);
+        }
+        var frag = gl.CreateShader(GLEnum.FragmentShader);
+        gl.ShaderSource(frag, FragShaderSource);
+        gl.CompileShader(frag);
+        gl.GetShader(frag, GLEnum.CompileStatus, out code);
+        if (code == 0)
+        {
+            gl.DeleteShader(vert);
+            var info = gl.GetShaderInfoLog(frag);
+            Console.WriteLine(FragShaderSource);
+            Hilog.OH_LOG_ERROR(LogType.LOG_APP, "fs shader", info);
+            throw new Exception(info);
+        }
+
+        programId = gl.CreateProgram();
+        gl.AttachShader(programId, vert);
+        gl.AttachShader(programId, frag);
+        gl.LinkProgram(programId);
+        gl.GetProgram(programId, GLEnum.LinkStatus, out code);
+        if (code == 0)
+        {
+            gl.DeleteShader(vert);
+            gl.DeleteShader(frag);
+
+            var info = gl.GetProgramInfoLog(programId);
+            Hilog.OH_LOG_ERROR(LogType.LOG_APP, "program shader", info);
+            throw new Exception(info);
+        }
+        gl.DeleteShader(vert);
+        gl.DeleteShader(frag);
+    }
+
+    public uint vao;
+    public uint vbo;
+    public uint ebo;
+    public uint programId;
+    public unsafe void Init()
+    {
+        vao = gl.GenVertexArray();
+        float[] vertices = [
+            -1, 1, 0, 0, 0,
+            -1, -1, 0, 0, 1,
+            1, -1, 0, 1, 1,
+            1, 1, 0, 1, 0];
+        uint[] indices =
+        [
+            0, 1, 2, 2, 3,0
+        ];
+        vao = gl.GenVertexArray();
+        vbo = gl.GenBuffer();
+        ebo = gl.GenBuffer();
+        gl.BindVertexArray(vao);
+        gl.BindBuffer(GLEnum.ArrayBuffer, vbo);
+        fixed (float* p = vertices)
+        {
+            gl.BufferData(GLEnum.ArrayBuffer, (nuint)(vertices.Length * sizeof(float)), p, GLEnum.StaticDraw);
+        }
+        gl.BindBuffer(GLEnum.ElementArrayBuffer, ebo);
+        fixed (uint* p = indices)
+        {
+            gl.BufferData(GLEnum.ElementArrayBuffer, (nuint)(indices.Length * sizeof(uint)), p, GLEnum.StaticDraw);
+        }
+        // Location
+        gl.EnableVertexAttribArray(0);
+        gl.VertexAttribPointer(0, 3, GLEnum.Float, false, (uint)sizeof(float) * 5, (void*)0);
+        // TexCoord
+        gl.EnableVertexAttribArray(1);
+        gl.VertexAttribPointer(1, 2, GLEnum.Float, false, (uint)sizeof(float) * 5, (void*)sizeof(Vector3));
+        gl.BindVertexArray(0);
     }
 
 
