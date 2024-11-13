@@ -22,9 +22,9 @@ public class OpenHarmonyPlatform
         OpenHarmonyPlatformThreading = new OpenHarmonyPlatformThreading();
         AvaloniaLocator.CurrentMutable
             .Bind<PlatformHotkeyConfiguration>().ToSingleton<PlatformHotkeyConfiguration>()
-            .Bind<IFontManagerImpl>().ToConstant(new CustomFontManagerImpl())
+            .Bind<IFontManagerImpl>().ToSingleton<CustomFontManagerImpl>()
             .Bind<IRuntimePlatform>().ToSingleton<OpenHarmonyRuntimePlatform>()
-            .Bind<IRenderTimer>().ToConstant(OpenHarmonyRenderTimer.Instance)
+            .Bind<IRenderTimer>().ToSingleton<OpenHarmonyRenderTimer>()
             .Bind<ICursorFactory>().ToSingleton<CursorFactory>()
             .Bind<IPlatformThreadingInterface>().ToConstant(OpenHarmonyPlatformThreading);
 

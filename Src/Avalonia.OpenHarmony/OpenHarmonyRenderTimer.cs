@@ -7,7 +7,6 @@ namespace Avalonia.OpenHarmony;
 public class OpenHarmonyRenderTimer : IRenderTimer
 {
     private static readonly Stopwatch s_sw = Stopwatch.StartNew();
-    public static OpenHarmonyRenderTimer Instance { get; } = new();
     public bool RunsInBackground => false;
 
     public event Action<TimeSpan>? Tick;

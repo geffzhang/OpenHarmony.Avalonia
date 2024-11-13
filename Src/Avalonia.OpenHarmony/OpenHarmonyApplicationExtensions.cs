@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Avalonia.Media;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,13 +9,10 @@ namespace Avalonia.OpenHarmony;
 
 public static class OpenHarmonyApplicationExtensions
 {
-    public static AppBuilder UseOpenHarmony(this AppBuilder builder)
-    {
-        return builder
+    public static AppBuilder UseOpenHarmony(this AppBuilder builder) => builder
             .UseStandardRuntimePlatformSubsystem()
             .UseWindowingSubsystem(OpenHarmonyPlatform.Initialize, "OpenHarmony")
             .UseSkia();
-    }
 
     public static AppBuilder UseSoftwareRenderer(this AppBuilder builder)
     {

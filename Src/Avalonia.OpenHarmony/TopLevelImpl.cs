@@ -35,6 +35,8 @@ public class TopLevelImpl : ITopLevelImpl, EglGlPlatformSurface.IEglWindowGlPlat
     public GL gl;
 
     public List<OpenHarmonyFramebuffer> framebuffers = [];
+
+    public OpenHarmonyRenderTimer RenderTimer { get; private set; }
     public void AddFrameBuffer(OpenHarmonyFramebuffer framebuffer)
     {
         Hilog.OH_LOG_INFO(LogType.LOG_APP, "framebuffer", "AddFrameBuffer");
@@ -49,7 +51,7 @@ public class TopLevelImpl : ITopLevelImpl, EglGlPlatformSurface.IEglWindowGlPlat
 
     public unsafe void Render()
     {
-        OpenHarmonyRenderTimer.Instance.Render();
+        RenderTimer.Render();
         Paint.Invoke(new Rect(0, 0, Size.Width, Size.Height));
         OpenHarmonyPlatform.OpenHarmonyPlatformThreading.Tick();
 
@@ -91,6 +93,7 @@ public class TopLevelImpl : ITopLevelImpl, EglGlPlatformSurface.IEglWindowGlPlat
             InitShader();
             InitOrUpdateTexture();
         }
+        RenderTimer = AvaloniaLocator.Current.GetService<IRenderTimer>() as OpenHarmonyRenderTimer;
     }
 
     public uint textureId;
