@@ -6,34 +6,75 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="AvaloniaExample.Views.MainView"
              x:DataType="vm:MainViewModel">
-  <Design.DataContext>
-    <!-- This only sets the DataContext for the previewer in an IDE,
+	<Design.DataContext>
+		<!-- This only sets the DataContext for the previewer in an IDE,
          to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
-    <vm:MainViewModel />
-  </Design.DataContext>
-	<StackPanel>
-		<Image Source="avares://AvaloniaExample/Assets/test_image.png"/>
-		<TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-		<TextBox Text="Hello OpenHarmony!"></TextBox>
-		<ProgressBar  Margin="0 10" Height="20"
-					  Minimum="0" Maximum="100" Value="92"
-					  Foreground="Red"
-					  ShowProgressText="True"/>
-		<Slider Value="35" x:Name="slider" />
-		<RadioButton GroupName="First Group"
-              Content="First Option"/>
-		<RadioButton GroupName="First Group"
-				  Content="Second Option"/>
-		<RadioButton IsEnabled="False"
-				  GroupName="First Group"
-				  Content="Third Option"/>
-		<CheckBox>Not checked by default</CheckBox>
-		<CheckBox IsChecked="True">Checked by default</CheckBox>
-		<Panel Height="300" Width="300">
-			<Rectangle Fill="Red" Height="100" VerticalAlignment="Top"/>
-			<Rectangle Fill="Blue" Opacity="0.5" Width="100" HorizontalAlignment="Right" />
-			<Rectangle Fill="Green" Opacity="0.5" Height="100" VerticalAlignment="Bottom"/>
-			<Rectangle Fill="Orange" Width="100" HorizontalAlignment="Left"/>
-		</Panel>
-	</StackPanel>
+		<vm:MainViewModel />
+	</Design.DataContext>
+	<ScrollViewer>
+		<StackPanel>
+
+
+			<Panel>
+				<Carousel Name="slides" >
+					<Carousel.PageTransition >
+						<CompositePageTransition>
+							<PageSlide Duration="0:00:01.500" Orientation="Horizontal" />
+						</CompositePageTransition>
+					</Carousel.PageTransition>
+					<Carousel.Items>
+						<Image Source="avares://AvaloniaExample/Assets/test_image.png" />
+						<Image Source="avares://AvaloniaExample/Assets/test_image.png" />
+						<Image Source="avares://AvaloniaExample/Assets/test_image.png" />
+					</Carousel.Items>
+				</Carousel>
+				<Panel Margin="20">
+					<Button Background="White" Click="Previous">&lt;</Button>
+					<Button Background="White" Click="Next"
+							HorizontalAlignment="Right">&gt;</Button>
+				</Panel>
+			</Panel>
+			
+			<TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+			<TextBox Text="Hello OpenHarmony!"></TextBox>
+			<ProgressBar  Margin="0 10" Height="20"
+						  Minimum="0" Maximum="100" Value="92"
+						  Foreground="Red"
+						  ShowProgressText="True"/>
+			<Slider x:Name="slider" />
+			<StackPanel Margin="20">
+				<Calendar x:Name="calendar" SelectionMode="MultipleRange"/>
+				<TextBlock Margin="20"
+						   Text="{Binding #calendar.SelectedDate}"/>
+			</StackPanel>
+			<RadioButton GroupName="First Group"
+				  Content="First Option"/>
+			<RadioButton GroupName="First Group"
+					  Content="Second Option"/>
+			<RadioButton IsEnabled="False"
+					  GroupName="First Group"
+					  Content="Third Option"/>
+			<Button Content="Click Me!"></Button>
+			<ComboBox SelectedIndex="0" MaxDropDownHeight="100">
+				<ComboBoxItem>Text Item 1</ComboBoxItem>
+				<ComboBoxItem>Text Item 2</ComboBoxItem>
+				<ComboBoxItem>Text Item 3</ComboBoxItem>
+				<ComboBoxItem>Text Item 4</ComboBoxItem>
+				<ComboBoxItem>Text Item 5</ComboBoxItem>
+				<ComboBoxItem>Text Item 6</ComboBoxItem>
+				<ComboBoxItem>Text Item 7</ComboBoxItem>
+				<ComboBoxItem>Text Item 8</ComboBoxItem>
+				<ComboBoxItem>Text Item 9</ComboBoxItem>
+			</ComboBox>
+			
+			<CheckBox>Not checked by default</CheckBox>
+			<CheckBox IsChecked="True">Checked by default</CheckBox>
+			<Panel Height="300" Width="300">
+				<Rectangle Fill="Red" Height="100" VerticalAlignment="Top"/>
+				<Rectangle Fill="Blue" Opacity="0.5" Width="100" HorizontalAlignment="Right" />
+				<Rectangle Fill="Green" Opacity="0.5" Height="100" VerticalAlignment="Bottom"/>
+				<Rectangle Fill="Orange" Width="100" HorizontalAlignment="Left"/>
+			</Panel>
+		</StackPanel>
+	</ScrollViewer>
 </UserControl>

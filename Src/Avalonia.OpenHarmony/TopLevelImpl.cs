@@ -9,14 +9,9 @@ using Avalonia.Rendering.Composition;
 using OpenHarmony.Sdk;
 using OpenHarmony.Sdk.Native;
 using Silk.NET.OpenGLES;
-using StbImageWriteSharp;
 using System.Drawing;
-using System.IO;
-using System.Net;
 using System.Numerics;
 using System.Runtime.InteropServices;
-using System.Xml.Linq;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Avalonia.OpenHarmony;
 
@@ -32,11 +27,13 @@ public class TopLevelImpl : ITopLevelImpl, EglGlPlatformSurface.IEglWindowGlPlat
 
     public IGlPlatformSurface _gl;
 
-    public GL gl;
+    public GL? gl;
 
     public List<OpenHarmonyFramebuffer> framebuffers = [];
 
-    public OpenHarmonyRenderTimer RenderTimer { get; private set; }
+    public OpenHarmonyRenderTimer? RenderTimer { get; private set; }
+
+    public OpenHarmonyPlatformThreading? OpenHarmonyPlatformThreading { get; private set; }
     public void AddFrameBuffer(OpenHarmonyFramebuffer framebuffer)
     {
         Hilog.OH_LOG_INFO(LogType.LOG_APP, "framebuffer", "AddFrameBuffer");
@@ -51,9 +48,9 @@ public class TopLevelImpl : ITopLevelImpl, EglGlPlatformSurface.IEglWindowGlPlat
 
     public unsafe void Render()
     {
-        RenderTimer.Render();
-        Paint.Invoke(new Rect(0, 0, Size.Width, Size.Height));
-        OpenHarmonyPlatform.OpenHarmonyPlatformThreading.Tick();
+        RenderTimer?.Render();
+        Paint?.Invoke(new Rect(0, 0, Size.Width, Size.Height));
+        OpenHarmonyPlatformThreading?.Tick();
 
         if (gl != null)
         {
@@ -94,6 +91,7 @@ public class TopLevelImpl : ITopLevelImpl, EglGlPlatformSurface.IEglWindowGlPlat
             InitOrUpdateTexture();
         }
         RenderTimer = AvaloniaLocator.Current.GetService<IRenderTimer>() as OpenHarmonyRenderTimer;
+        OpenHarmonyPlatformThreading = AvaloniaLocator.Current.GetService<IPlatformThreadingInterface>() as OpenHarmonyPlatformThreading;
     }
 
     public uint textureId;
@@ -101,6 +99,8 @@ public class TopLevelImpl : ITopLevelImpl, EglGlPlatformSurface.IEglWindowGlPlat
     public nint Address;
     public unsafe void InitOrUpdateTexture()
     {
+        if (gl == null)
+            return;
         if (Address == 0)
         {
             Address = Marshal.AllocHGlobal(sizeof(byte) * 4 * Size.Width * Size.Height);
@@ -108,12 +108,11 @@ public class TopLevelImpl : ITopLevelImpl, EglGlPlatformSurface.IEglWindowGlPlat
             for (int i = 0; i < span.Length; i++)
                 span[i] = 255;
         }
-        if (textureId != 0)
+        if (textureId == 0)
         {
-            gl.DeleteTexture(textureId);
+            textureId = gl.GenTexture();
         }
 
-        textureId = gl.GenTexture();
         gl.BindTexture(GLEnum.Texture2D, textureId);
         gl.TexImage2D(GLEnum.Texture2D, 0, (int)GLEnum.Rgba8, (uint)Size.Width, (uint)Size.Height, 0, GLEnum.Rgba, GLEnum.UnsignedByte, (void*)Address);
         gl.TexParameter(GLEnum.Texture2D, GLEnum.TextureMinFilter, (int)GLEnum.Linear);
@@ -124,6 +123,8 @@ public class TopLevelImpl : ITopLevelImpl, EglGlPlatformSurface.IEglWindowGlPlat
 
     public unsafe void InitShader()
     {
+        if (gl == null)
+            return;
         var VertShaderSource = @"
 #version 300 es
 precision highp float;

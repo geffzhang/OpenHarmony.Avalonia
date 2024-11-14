@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using Avalonia.Interactivity;
 using AvaloniaExample.ViewModels;
 using System.Threading.Tasks;
 
@@ -22,6 +23,16 @@ namespace AvaloniaExample.Views
                 vm.Greeting = "Welcome to Avalonia!" + i;
                 
             }
+        }
+
+        public void Next(object source, RoutedEventArgs args)
+        {
+            slides.Next();
+        }
+
+        public void Previous(object source, RoutedEventArgs args)
+        {
+            slides.Previous();
         }
     }
 }

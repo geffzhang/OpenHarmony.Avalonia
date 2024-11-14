@@ -21,14 +21,7 @@ public class OpenHarmonyFramebuffer : ILockedFramebuffer
 
     }
 
-    public nint Address
-    {
-        get
-        {
-            Hilog.OH_LOG_INFO(LogType.LOG_APP, "csharp", "Size:" + Size + ", Dpi:" + Dpi);
-            return TopLevelImpl.Address;
-        }
-    }
+    public nint Address => TopLevelImpl.Address;
 
     public PixelSize Size { get; private set; }
 

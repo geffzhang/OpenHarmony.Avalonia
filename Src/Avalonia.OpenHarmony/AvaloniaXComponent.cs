@@ -1,9 +1,11 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Controls.Embedding;
+using Avalonia.Input;
+using Avalonia.Input.Raw;
 using Avalonia.OpenGL.Egl;
 using OpenHarmony.Sdk.Native;
 using Silk.NET.OpenGLES;
-using System.Drawing;
+using Avalonia.Collections.Pooled;
 using System.Runtime.InteropServices;
 
 namespace Avalonia.OpenHarmony;
@@ -20,8 +22,14 @@ public class AvaloniaXComponent<TApp> : XComponent where TApp : Application, new
     nint surface;
     EglInterface egl;
 
+    private readonly TouchDevice _touchDevice;
+    private readonly MouseDevice _mouseDevice;
+    private readonly PenDevice _penDevice;
     public AvaloniaXComponent(nint XComponentHandle, nint WindowHandle) : base(XComponentHandle, WindowHandle)
     {
+        _touchDevice = new TouchDevice();
+        _penDevice = new PenDevice();
+        _mouseDevice = new MouseDevice();
     }
 
     public unsafe void InitOpenGlEnv()
@@ -102,6 +110,53 @@ public class AvaloniaXComponent<TApp> : XComponent where TApp : Application, new
 
     }
 
+    public unsafe override void DispatchTouchEvent()
+    {
+        base.DispatchTouchEvent();
+        Hilog.OH_LOG_INFO(LogType.LOG_APP, "csharp", "DispatchTouchEvent");
+        OH_NativeXComponent_TouchEvent touchEvent = default;
+        var result = ace_ndk.OH_NativeXComponent_GetTouchEvent((OH_NativeXComponent*)XComponentHandle, (void*)WindowHandle, &touchEvent);
+        if (result == (int)OH_NATIVEXCOMPONENT_RESULT.SUCCESS)
+        {
+            for (uint i = 0; i < touchEvent.numPoints; i++)
+            {
+                OH_NativeXComponent_TouchPointToolType toolType = default;
+                float tiltX = 0;
+                float tiltY = 0;
+
+
+                ace_ndk.OH_NativeXComponent_GetTouchPointToolType((OH_NativeXComponent*)XComponentHandle, i, &toolType);
+                ace_ndk.OH_NativeXComponent_GetTouchPointTiltX((OH_NativeXComponent*)XComponentHandle, i, &tiltX);
+                ace_ndk.OH_NativeXComponent_GetTouchPointTiltY((OH_NativeXComponent*)XComponentHandle, i, &tiltY);
+
+
+                var id = touchEvent.touchPoints[(int)i].id;
+
+                var type = touchEvent.touchPoints[(int)i].type switch
+                {
+                    OH_NativeXComponent_TouchEventType.OH_NATIVEXCOMPONENT_DOWN => RawPointerEventType.TouchBegin,
+                    OH_NativeXComponent_TouchEventType.OH_NATIVEXCOMPONENT_UP => RawPointerEventType.TouchEnd,
+                    OH_NativeXComponent_TouchEventType.OH_NATIVEXCOMPONENT_MOVE => RawPointerEventType.TouchUpdate,
+                    OH_NativeXComponent_TouchEventType.OH_NATIVEXCOMPONENT_CANCEL => RawPointerEventType.TouchCancel,
+                };
+
+                var position = new Point(touchEvent.touchPoints[(int)i].x, touchEvent.touchPoints[(int)i].y) / TopLevelImpl.RenderScaling;
+                var modifiers = RawInputModifiers.None;
+                if (type == RawPointerEventType.TouchUpdate)
+                {
+                    modifiers |= RawInputModifiers.LeftMouseButton;
+                }
+                var args = new RawTouchEventArgs(_touchDevice, (ulong)touchEvent.touchPoints[(int)i].timeStamp, TopLevelImpl.InputRoot, type, position, RawInputModifiers.LeftMouseButton, id);
+                
+                TopLevelImpl.Input.Invoke(args);
+            }
+        }
+        else
+        {
+            Hilog.OH_LOG_ERROR(LogType.LOG_APP, "csharp", "OH_NativeXComponent_GetTouchEvent fail");
+        }
+        
+    }
     private AppBuilder CreateAppBuilder() => AppBuilder.Configure<TApp>().UseOpenHarmony();
 
 }

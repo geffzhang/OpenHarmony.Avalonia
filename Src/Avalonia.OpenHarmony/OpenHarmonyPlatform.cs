@@ -13,20 +13,18 @@ namespace Avalonia.OpenHarmony;
 public class OpenHarmonyPlatform
 {
     public static Compositor? Compositor { get; private set; }
-    public static OpenHarmonyPlatformThreading? OpenHarmonyPlatformThreading { get; private set; }
 
     public static OpenHarmonyPlatformOptions Options = new OpenHarmonyPlatformOptions() { RenderingMode = [OpenHarmonyPlatformRenderingMode.Software] };
     public static void Initialize()
     {
         var options = AvaloniaLocator.Current.GetService<OpenHarmonyPlatformOptions>() ?? new OpenHarmonyPlatformOptions();
-        OpenHarmonyPlatformThreading = new OpenHarmonyPlatformThreading();
         AvaloniaLocator.CurrentMutable
             .Bind<PlatformHotkeyConfiguration>().ToSingleton<PlatformHotkeyConfiguration>()
             .Bind<IFontManagerImpl>().ToSingleton<CustomFontManagerImpl>()
             .Bind<IRuntimePlatform>().ToSingleton<OpenHarmonyRuntimePlatform>()
             .Bind<IRenderTimer>().ToSingleton<OpenHarmonyRenderTimer>()
             .Bind<ICursorFactory>().ToSingleton<CursorFactory>()
-            .Bind<IPlatformThreadingInterface>().ToConstant(OpenHarmonyPlatformThreading);
+            .Bind<IPlatformThreadingInterface>().ToSingleton<OpenHarmonyPlatformThreading>();
 
         var platformGraphics = InitializeGraphics(options);
         if (platformGraphics is not null)

@@ -18,7 +18,6 @@ public class XComponent
         ulong Width = 0;
         ulong Height = 0;
         ace_ndk.OH_NativeXComponent_GetXComponentSize((OH_NativeXComponent*)XComponentHandle, (void*)WindowHandle, &Width, &Height);
-        Hilog.OH_LOG_INFO(LogType.LOG_APP, "CSharp", $"window size: w-{Width}, h-{Height}");
         return new Size(Width, Height); 
     }
 
