@@ -34,29 +34,18 @@ public class TopLevelImpl : ITopLevelImpl, EglGlPlatformSurface.IEglWindowGlPlat
     public OpenHarmonyRenderTimer? RenderTimer { get; private set; }
 
     public OpenHarmonyPlatformThreading? OpenHarmonyPlatformThreading { get; private set; }
-    public void AddFrameBuffer(OpenHarmonyFramebuffer framebuffer)
-    {
-        Hilog.OH_LOG_INFO(LogType.LOG_APP, "framebuffer", "AddFrameBuffer");
-        framebuffers.Add(framebuffer);
-    }
-
-    public void DelFrameBuffer(OpenHarmonyFramebuffer framebuffer)
-    {
-        framebuffers.Remove(framebuffer);
-        Hilog.OH_LOG_INFO(LogType.LOG_APP, "framebuffer", "DelFrameBuffer");
-    }
-
+    
     public unsafe void Render()
     {
         RenderTimer?.Render();
         Paint?.Invoke(new Rect(0, 0, Size.Width, Size.Height));
         OpenHarmonyPlatformThreading?.Tick();
-
+        // software render
         if (gl != null)
         {
             InitOrUpdateTexture();
 
-            gl.ClearColor(Color.Red);
+            gl.ClearColor(Color.White);
             gl.Clear(ClearBufferMask.DepthBufferBit | ClearBufferMask.ColorBufferBit);
 
             gl.UseProgram(programId);
@@ -66,8 +55,6 @@ public class TopLevelImpl : ITopLevelImpl, EglGlPlatformSurface.IEglWindowGlPlat
             gl.BindTexture(GLEnum.Texture2D, textureId);
             gl.BindVertexArray(vao);
             gl.DrawElements(GLEnum.Triangles, 6, GLEnum.UnsignedInt, (void*)0);
-
-
         }
         
     }
@@ -151,6 +138,7 @@ uniform sampler2D Texture_Buffer;
 in vec2 texCoord;
 void main()
 {
+
  Color = texture(Texture_Buffer, texCoord);
 }
 ";
@@ -274,6 +262,11 @@ void main()
 
 
     public IInputRoot? InputRoot { get; private set; }
+
+    public double DesktopScaling => throw new NotImplementedException();
+
+    IPlatformHandle? ITopLevelImpl.Handle => throw new NotImplementedException();
+
     public void SetInputRoot(IInputRoot inputRoot)
     {
         InputRoot = inputRoot;

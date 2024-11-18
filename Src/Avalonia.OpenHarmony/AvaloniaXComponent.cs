@@ -12,15 +12,15 @@ namespace Avalonia.OpenHarmony;
 
 public class AvaloniaXComponent<TApp> : XComponent where TApp : Application, new()
 {
-    public SingleViewLifetime SingleViewLifetime;
-    public EmbeddableControlRoot Root;
-    public TopLevelImpl TopLevelImpl;
+    public SingleViewLifetime? SingleViewLifetime;
+    public EmbeddableControlRoot? Root;
+    public TopLevelImpl? TopLevelImpl;
 
     public bool UseSoftRenderer = true;
-    GL gl;
+    GL? gl;
     nint display;
     nint surface;
-    EglInterface egl;
+    EglInterface? egl;
 
     private readonly TouchDevice _touchDevice;
     private readonly MouseDevice _mouseDevice;
@@ -76,7 +76,6 @@ public class AvaloniaXComponent<TApp> : XComponent where TApp : Application, new
 
     public override void OnSurfaceCreated()
     {
-        base.OnSurfaceCreated();
         if (UseSoftRenderer == true)
         {
             InitOpenGlEnv();
@@ -85,15 +84,22 @@ public class AvaloniaXComponent<TApp> : XComponent where TApp : Application, new
         if (UseSoftRenderer)
         {
             builder.UseSoftwareRenderer();
-            AvaloniaLocator.CurrentMutable.Bind<GL>().ToConstant(gl);
+            if (gl != null)
+            {
+                AvaloniaLocator.CurrentMutable.Bind<GL>().ToConstant(gl);
+            }
         }
         SingleViewLifetime = new SingleViewLifetime();
         builder.AfterApplicationSetup(CreateView).SetupWithLifetime(SingleViewLifetime);
-        Root.StartRendering();
+        Root?.StartRendering();
     }
 
     public override void OnSurfaceRendered(ulong timestamp, ulong targetTimestamp)
     {
+        if (egl == null)
+            return;
+        if (TopLevelImpl == null)
+            return;
         base.OnSurfaceRendered(timestamp, targetTimestamp);
         TopLevelImpl.Render();
         if (UseSoftRenderer == true)
@@ -103,6 +109,8 @@ public class AvaloniaXComponent<TApp> : XComponent where TApp : Application, new
     }
     private void CreateView(AppBuilder appBuilder)
     {
+        if (SingleViewLifetime == null)
+            return;
         TopLevelImpl = new TopLevelImpl(XComponentHandle, WindowHandle);
         Root = new EmbeddableControlRoot(TopLevelImpl);
         SingleViewLifetime.Root = Root;
@@ -112,8 +120,12 @@ public class AvaloniaXComponent<TApp> : XComponent where TApp : Application, new
 
     public unsafe override void DispatchTouchEvent()
     {
-        base.DispatchTouchEvent();
-        Hilog.OH_LOG_INFO(LogType.LOG_APP, "csharp", "DispatchTouchEvent");
+        if (TopLevelImpl == null)
+            return;
+        if (TopLevelImpl.Input == null)
+            return;
+        if (TopLevelImpl.InputRoot == null)
+            return;
         OH_NativeXComponent_TouchEvent touchEvent = default;
         var result = ace_ndk.OH_NativeXComponent_GetTouchEvent((OH_NativeXComponent*)XComponentHandle, (void*)WindowHandle, &touchEvent);
         if (result == (int)OH_NATIVEXCOMPONENT_RESULT.SUCCESS)
@@ -138,6 +150,7 @@ public class AvaloniaXComponent<TApp> : XComponent where TApp : Application, new
                     OH_NativeXComponent_TouchEventType.OH_NATIVEXCOMPONENT_UP => RawPointerEventType.TouchEnd,
                     OH_NativeXComponent_TouchEventType.OH_NATIVEXCOMPONENT_MOVE => RawPointerEventType.TouchUpdate,
                     OH_NativeXComponent_TouchEventType.OH_NATIVEXCOMPONENT_CANCEL => RawPointerEventType.TouchCancel,
+                    _ => throw new NotImplementedException()
                 };
 
                 var position = new Point(touchEvent.touchPoints[(int)i].x, touchEvent.touchPoints[(int)i].y) / TopLevelImpl.RenderScaling;
@@ -148,7 +161,7 @@ public class AvaloniaXComponent<TApp> : XComponent where TApp : Application, new
                 }
                 var args = new RawTouchEventArgs(_touchDevice, (ulong)touchEvent.touchPoints[(int)i].timeStamp, TopLevelImpl.InputRoot, type, position, RawInputModifiers.LeftMouseButton, id);
                 
-                TopLevelImpl.Input.Invoke(args);
+                TopLevelImpl.Input?.Invoke(args);
             }
         }
         else

@@ -8,6 +8,7 @@ using OpenHarmony.Sdk.Native;
 using System.Runtime.Loader;
 using System.Reflection;
 using System.Runtime.Serialization;
+using System.Runtime.CompilerServices;
 
 namespace Avalonia.OpenHarmony;
 
@@ -105,10 +106,8 @@ public class CustomFontManagerImpl : IFontManagerImpl
         Assembly? currentAssembly = null;
         foreach (var alc in AssemblyLoadContext.All)
         {
-            Hilog.OH_LOG_DEBUG(LogType.LOG_APP, "csharp", "AssemblyLoadContext");
             foreach (var assembly in alc.Assemblies)
             {
-                Hilog.OH_LOG_DEBUG(LogType.LOG_APP, "csharp", "Assemblies");
                 type = assembly.GetType("Avalonia.Skia.GlyphTypefaceImpl");
                 currentAssembly = assembly;
                 if (type != null)
@@ -120,7 +119,7 @@ public class CustomFontManagerImpl : IFontManagerImpl
         try
         {
             var ctor = type.GetConstructor([typeof(SKTypeface), typeof(FontSimulations)]);
-            object obj = (object)FormatterServices.GetUninitializedObject(type);
+            object obj = RuntimeHelpers.GetUninitializedObject(type);
             ctor.Invoke(obj, [skTypeface, fontSimulations]);
             return (IGlyphTypeface)obj;
 
