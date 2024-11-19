@@ -31,9 +31,9 @@ public class napi_init
 
 
     [UnmanagedCallersOnly(CallConvs = [typeof(CallConvCdecl)])]
-    public unsafe static napi_value* Init(napi_env* env, napi_value* exports)
+    public unsafe static napi_value Init(napi_env env, napi_value exports)
     {
-        napi_value* exportInstance = null;
+        napi_value exportInstance = default;
         OH_NativeXComponent* nativeXComponent = null;
         int ret = default;
         var xcomponentName = "__NATIVE_XCOMPONENT_OBJ__";
