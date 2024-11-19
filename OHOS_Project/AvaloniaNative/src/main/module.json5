@@ -31,21 +31,8 @@
             ]
           }
         ]
-      }
-    ],
+      }],
     "extensionAbilities": [
-      {
-        "name": "AvaloniaNativeBackupAbility",
-        "srcEntry": "./ets/avalonianativebackupability/AvaloniaNativeBackupAbility.ets",
-        "type": "backup",
-        "exported": false,
-        "metadata": [
-          {
-            "name": "ohos.extension.backup",
-            "resource": "$profile:backup_config"
-          }
-        ]
-      }
     ]
   }
 }

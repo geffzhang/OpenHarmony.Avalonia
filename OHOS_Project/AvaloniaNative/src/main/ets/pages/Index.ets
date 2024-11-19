@@ -8,7 +8,7 @@ struct Index {
   build() {
     Row() {
       Column() {
-        XComponent({libraryname: 'avalonianative',type:'Surface', id: 'avaloniaRootComponent' })
+        XComponent({libraryname: 'avalonianative',type: XComponentType.SURFACE, id: 'avaloniaRootComponent' })
       }
       .width('100%')
     }
