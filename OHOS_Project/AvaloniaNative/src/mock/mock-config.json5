@@ -1,5 +1,0 @@
-{
-  "libavalonianative.so": {
-    "source": "src/mock/Libavalonianative.mock.ets"
-  }
-}

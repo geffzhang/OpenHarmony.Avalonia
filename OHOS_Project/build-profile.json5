@@ -1,28 +1,18 @@
 {
   "app": {
-    "signingConfigs": [
-      {
-        "name": "default",
-        "material": {
-          "certpath": "C:/Users/CeSun/.ohos/config/openharmony/default_OHOS_Project_tjvsHnvFWQJxayUbgqIuJawiWQnqnke7APW5aAsu9s0=.cer",
-          "storePassword": "0000001B2EAB165AB49BC0079E8F5F61753D64FC85F23E8542CC5FEDF6B57B9BB387C6CAE430E64F1AE257",
-          "keyAlias": "debugKey",
-          "keyPassword": "0000001B9BE9CF523C87D888245C3DA1E95AD067B8621DFCCE2E829A42308498252BC1403F722704E2927C",
-          "profile": "C:/Users/CeSun/.ohos/config/openharmony/default_OHOS_Project_tjvsHnvFWQJxayUbgqIuJawiWQnqnke7APW5aAsu9s0=.p7b",
-          "signAlg": "SHA256withECDSA",
-          "storeFile": "C:/Users/CeSun/.ohos/config/openharmony/default_OHOS_Project_tjvsHnvFWQJxayUbgqIuJawiWQnqnke7APW5aAsu9s0=.p12"
-        }
-      }
-    ],
+    "signingConfigs": [],
     "products": [
       {
         "name": "default",
         "signingConfig": "default",
-        "compatibleSdkVersion": 12,
-        "compileSdkVersion": 12,
-        "runtimeOS": "OpenHarmony"
-        //"compatibleSdkVersion": "5.0.0(12)",
-        //"runtimeOS": "HarmonyOS",
+        "compatibleSdkVersion": "5.0.0(12)",
+        "runtimeOS": "HarmonyOS",
+        "buildOption": {
+          "strictMode": {
+            "caseSensitiveCheck": true,
+            "useNormalizedOHMUrl": true
+          }
+        }
       }
     ],
     "buildModeSet": [
@@ -36,8 +26,8 @@
   },
   "modules": [
     {
-      "name": "AvaloniaNative",
-      "srcPath": "./AvaloniaNative",
+      "name": "entry",
+      "srcPath": "./entry",
       "targets": [
         {
           "name": "default",

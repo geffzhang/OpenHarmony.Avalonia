@@ -20,9 +20,4 @@ public static class OpenHarmonyApplicationExtensions
         return builder; 
     }
 
-    public static AppBuilder UseSoftWareRenderer(this AppBuilder builder)
-    {
-        return builder;
-    }
-
 }

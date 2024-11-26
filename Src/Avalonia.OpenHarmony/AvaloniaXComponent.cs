@@ -1,11 +1,9 @@
-﻿using Avalonia.Controls;
-using Avalonia.Controls.Embedding;
+﻿using Avalonia.Controls.Embedding;
 using Avalonia.Input;
 using Avalonia.Input.Raw;
 using Avalonia.OpenGL.Egl;
 using OpenHarmony.Sdk.Native;
 using Silk.NET.OpenGLES;
-using Avalonia.Collections.Pooled;
 using System.Runtime.InteropServices;
 
 namespace Avalonia.OpenHarmony;
@@ -96,13 +94,11 @@ public class AvaloniaXComponent<TApp> : XComponent where TApp : Application, new
 
     public override void OnSurfaceRendered(ulong timestamp, ulong targetTimestamp)
     {
-        if (egl == null)
-            return;
         if (TopLevelImpl == null)
             return;
         base.OnSurfaceRendered(timestamp, targetTimestamp);
         TopLevelImpl.Render();
-        if (UseSoftRenderer == true)
+        if (UseSoftRenderer == true && egl != null)
         {
             egl.SwapBuffers(display, surface);
         }
