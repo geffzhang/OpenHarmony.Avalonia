@@ -14,7 +14,7 @@ public class AvaloniaXComponent<TApp> : XComponent where TApp : Application, new
     public EmbeddableControlRoot? Root;
     public TopLevelImpl? TopLevelImpl;
 
-    public bool UseSoftRenderer = true;
+    public bool UseSoftRenderer = false;
     GL? gl;
     nint display;
     nint surface;
@@ -166,6 +166,7 @@ public class AvaloniaXComponent<TApp> : XComponent where TApp : Application, new
         }
         
     }
+
     private AppBuilder CreateAppBuilder() => AppBuilder.Configure<TApp>().UseOpenHarmony();
 
 }

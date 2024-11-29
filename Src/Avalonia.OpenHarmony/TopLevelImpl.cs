@@ -1,6 +1,8 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Input.Platform;
 using Avalonia.Input.Raw;
+using Avalonia.Input.TextInput;
 using Avalonia.OpenGL.Egl;
 using Avalonia.OpenGL.Surfaces;
 using Avalonia.Platform;
@@ -9,6 +11,7 @@ using Avalonia.Rendering.Composition;
 using OpenHarmony.Sdk;
 using OpenHarmony.Sdk.Native;
 using Silk.NET.OpenGLES;
+using System.Diagnostics;
 using System.Drawing;
 using System.Numerics;
 using System.Runtime.InteropServices;
@@ -34,12 +37,34 @@ public class TopLevelImpl : ITopLevelImpl, EglGlPlatformSurface.IEglWindowGlPlat
     public OpenHarmonyRenderTimer? RenderTimer { get; private set; }
 
     public OpenHarmonyPlatformThreading? OpenHarmonyPlatformThreading { get; private set; }
-    
+
+    public OpenHarmonyInputMethod _textInputMethod = new OpenHarmonyInputMethod();
+
+    public ClipboardImpl _clipboard = new ClipboardImpl();
     public unsafe void Render()
     {
-        RenderTimer?.Render();
-        Paint?.Invoke(new Rect(0, 0, Size.Width, Size.Height));
-        OpenHarmonyPlatformThreading?.Tick();
+        try
+        {
+            RenderTimer?.Render();
+            Paint?.Invoke(new Rect(0, 0, Size.Width, Size.Height));
+            OpenHarmonyPlatformThreading?.Tick();
+        }
+        catch (Exception e)
+        {
+            Hilog.OH_LOG_ERROR(LogType.LOG_APP, "csharp", e.Message.ToString());
+            if (e.StackTrace != null)
+            {
+                Hilog.OH_LOG_ERROR(LogType.LOG_APP, "csharp", e.StackTrace.ToString());
+            }
+            if (e.InnerException != null)
+            {
+                Hilog.OH_LOG_ERROR(LogType.LOG_APP, "csharp", e.InnerException.Message.ToString());
+                if (e.InnerException.StackTrace != null)
+                {
+                    Hilog.OH_LOG_ERROR(LogType.LOG_APP, "csharp", e.InnerException.StackTrace.ToString());
+                }
+            }
+        }
         // software render
         if (gl != null)
         {
@@ -302,6 +327,15 @@ void main()
 
     public object? TryGetFeature(Type featureType)
     {
+
+        if (featureType == typeof(ITextInputMethodImpl))
+        {
+            return _textInputMethod;
+        }
+        else if (featureType == typeof(IClipboard))
+        {
+            return _clipboard;
+        }
         // todo
         return null;
     }
