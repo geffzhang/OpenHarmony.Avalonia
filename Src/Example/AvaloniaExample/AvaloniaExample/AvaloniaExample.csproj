@@ -23,4 +23,5 @@
     <PackageReference Include="Semi.Avalonia.ColorPicker" Version="11.2.1" />
     <PackageReference Include="Semi.Avalonia.DataGrid" Version="11.2.1" />
   </ItemGroup>
+
 </Project>

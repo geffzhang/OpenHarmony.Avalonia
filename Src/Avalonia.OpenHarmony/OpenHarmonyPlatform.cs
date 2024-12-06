@@ -12,7 +12,6 @@ namespace Avalonia.OpenHarmony;
 
 public class OpenHarmonyPlatform
 {
-    public static Compositor? Compositor { get; private set; }
 
     public static OpenHarmonyPlatformOptions Options = new OpenHarmonyPlatformOptions() { RenderingMode = [OpenHarmonyPlatformRenderingMode.Software] };
     public static void Initialize()
@@ -31,8 +30,8 @@ public class OpenHarmonyPlatform
         {
             AvaloniaLocator.CurrentMutable.Bind<IPlatformGraphics>().ToConstant(platformGraphics);
         }
-        Compositor = new Compositor(platformGraphics);
-        AvaloniaLocator.CurrentMutable.Bind<Compositor>().ToConstant(Compositor);
+        var compositor = new Compositor(platformGraphics);
+        AvaloniaLocator.CurrentMutable.Bind<Compositor>().ToConstant(compositor);
     }
 
     private static IPlatformGraphics? InitializeGraphics(OpenHarmonyPlatformOptions options)

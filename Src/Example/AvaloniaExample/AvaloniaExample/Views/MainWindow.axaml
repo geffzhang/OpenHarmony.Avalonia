@@ -7,6 +7,8 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="AvaloniaExample.Views.MainWindow"
         Icon="/Assets/avalonia-logo.ico"
+		Height="760"
+		Width="380"
         Title="AvaloniaExample">
         <views:MainView />
 </Window>

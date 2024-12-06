@@ -264,7 +264,7 @@ void main()
     public Action<double>? ScalingChanged { get; set; }
     public Action<WindowTransparencyLevel>? TransparencyLevelChanged { get; set; }
 
-    public Compositor Compositor => OpenHarmonyPlatform.Compositor ?? throw new InvalidOperationException("Android backend wasn't initialized. Make sure .UseAndroid() was executed.");
+    public Compositor Compositor => AvaloniaLocator.CurrentMutable.GetService<Compositor>() ?? throw new InvalidOperationException("Android backend wasn't initialized. Make sure .UseAndroid() was executed.");
 
     public Action? Closed  { get; set; }
     public Action? LostFocus { get; set; }

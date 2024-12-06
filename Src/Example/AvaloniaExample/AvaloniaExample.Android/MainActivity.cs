@@ -1,8 +1,9 @@
 ﻿using Android.App;
 using Android.Content.PM;
+using Android.OS;
 using Avalonia;
 using Avalonia.Android;
-
+using Android.Graphics;
 namespace AvaloniaExample.Android
 {
     [Activity(
@@ -13,10 +14,10 @@ namespace AvaloniaExample.Android
         ConfigurationChanges = ConfigChanges.Orientation | ConfigChanges.ScreenSize | ConfigChanges.UiMode)]
     public class MainActivity : AvaloniaMainActivity<App>
     {
-        protected override AppBuilder CustomizeAppBuilder(AppBuilder builder)
+        protected override void OnCreate(Bundle? savedInstanceState)
         {
-            return base.CustomizeAppBuilder(builder)
-                .WithInterFont();
+            base.OnCreate(savedInstanceState);
+            Window?.SetStatusBarColor(Color.Argb(255, 240, 240, 240));
         }
     }
 }

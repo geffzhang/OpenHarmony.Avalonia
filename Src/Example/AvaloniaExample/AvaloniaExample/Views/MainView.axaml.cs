@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Interactivity;
 using AvaloniaExample.ViewModels;
 using System.Threading.Tasks;
@@ -10,29 +11,41 @@ namespace AvaloniaExample.Views
         public MainView()
         {
             InitializeComponent();
-            Test();
         }
 
-        async Task Test()
+        private void OnShowHomeClick(object sender, PointerPressedEventArgs e)
         {
-            await Task.Yield();
-            var vm = this.DataContext as MainViewModel;
-            for (int i = 0; i < 10; i++)
-            {
-                await Task.Delay(1000);
-                vm.Greeting = "Welcome to Avalonia!" + i;
-                
-            }
+            var viewmodel = this.DataContext as MainViewModel;
+            if (viewmodel == null)
+                return;
+            viewmodel.ChangeTo(0);
+
         }
 
-        public void Next(object source, RoutedEventArgs args)
+        private void OnShowNewsClick(object sender, PointerPressedEventArgs e)
         {
-            slides.Next();
+            var viewmodel = this.DataContext as MainViewModel;
+            if (viewmodel == null)
+                return;
+            viewmodel.ChangeTo(1);
+
         }
 
-        public void Previous(object source, RoutedEventArgs args)
+        private void OnShowMessageClick(object sender, PointerPressedEventArgs e)
         {
-            slides.Previous();
+            var viewmodel = this.DataContext as MainViewModel;
+            if (viewmodel == null)
+                return;
+            viewmodel.ChangeTo(2);
+
+        }
+
+        private void OnShowProfileClick(object sender, PointerPressedEventArgs e)
+        {
+            var viewmodel = this.DataContext as MainViewModel;
+            if (viewmodel == null)
+                return;
+            viewmodel.ChangeTo(3);
         }
     }
 }
