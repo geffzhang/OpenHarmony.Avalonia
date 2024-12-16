@@ -20,11 +20,12 @@ public class CustomFontManagerImpl : IFontManagerImpl
 
     public CustomFontManagerImpl()
     {
-        _defaultFamilyName = "Noto Mono";
+        _defaultFamilyName = "HarmonyOS Sans";
 
         var source = new Uri("resm:Avalonia.OpenHarmony.Assets?assembly=Avalonia.OpenHarmony");
 
         _customFonts = new EmbeddedFontCollection(source, source);
+
     }
 
     public string GetDefaultFontFamilyName()
@@ -128,6 +129,12 @@ public class CustomFontManagerImpl : IFontManagerImpl
         {
             Hilog.OH_LOG_ERROR(LogType.LOG_APP, "CSharp", ex.Message);
             Hilog.OH_LOG_ERROR(LogType.LOG_APP, "CSharp", ex.StackTrace);
+            if (ex.InnerException != null)
+            {
+
+                Hilog.OH_LOG_ERROR(LogType.LOG_APP, "CSharp", ex.InnerException.Message);
+                Hilog.OH_LOG_ERROR(LogType.LOG_APP, "CSharp", ex.InnerException.StackTrace);
+            }
             throw ex;
         }
         return null;

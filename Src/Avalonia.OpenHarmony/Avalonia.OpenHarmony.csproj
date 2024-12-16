@@ -9,12 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-	<EmbeddedResource Include="Assets\Inter-Regular.ttf" />
-    <EmbeddedResource Include="Assets\NotoMono-Regular.ttf" />
-	<EmbeddedResource Include="Assets\NotoSans-Italic.ttf" />
-	<EmbeddedResource Include="Assets\NotoSansArabic-Regular.ttf" />
-	<EmbeddedResource Include="Assets\NotoSansHebrew-Regular.ttf" />
-    <EmbeddedResource Include="Assets\TwitterColorEmoji-SVGinOT.ttf" />
+	  <EmbeddedResource Include="Assets\*"></EmbeddedResource>
   </ItemGroup>
 
   <ItemGroup>
