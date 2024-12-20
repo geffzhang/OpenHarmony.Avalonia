@@ -64,6 +64,7 @@ public class TopLevelImpl : ITopLevelImpl, EglGlPlatformSurface.IEglWindowGlPlat
                     Hilog.OH_LOG_ERROR(LogType.LOG_APP, "csharp", e.InnerException.StackTrace.ToString());
                 }
             }
+            throw;
         }
         // software render
         if (gl != null)
